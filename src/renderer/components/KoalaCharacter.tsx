@@ -125,7 +125,7 @@ const KoalaCharacter: React.FC<KoalaCharacterProps> = ({ state, onChatClick, cha
           position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)',
           color: 'rgba(255,255,255,0.7)', fontSize: '12px', pointerEvents: 'none', textAlign: 'center',
         }}>
-          Click to chat with Rémi 🐨
+          Chat with Rémi
         </div>
       )}
     </div>

@@ -12,22 +12,29 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [koalaState, setKoalaState] = useState<'idle' | 'talking' | 'listening' | 'thinking'>('idle');
-  const [ttsEnabled, setTtsEnabled] = useState(true);
-  const [ttsRate, setTtsRate] = useState(1.0);
+  const saved = JSON.parse(localStorage.getItem('remi-settings') ?? '{}');
+  const [ttsEnabled, setTtsEnabled] = useState<boolean>(saved.ttsEnabled ?? true);
+  const [ttsRate, setTtsRate] = useState<number>(saved.ttsRate ?? 1.5);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [selectedVoice, setSelectedVoice] = useState('');
+  const [selectedVoice, setSelectedVoice] = useState<string>(saved.selectedVoice ?? '');
   const [micDevices, setMicDevices] = useState<MediaDeviceInfo[]>([]);
-  const [selectedMic, setSelectedMic] = useState('');
+  const [selectedMic, setSelectedMic] = useState<string>(saved.selectedMic ?? '');
   const [models, setModels] = useState<string[]>([]);
-  const [model, setModel] = useState('');
+  const [model, setModel] = useState<string>(saved.model ?? '');
+
+  useEffect(() => {
+    localStorage.setItem('remi-settings', JSON.stringify({ ttsEnabled, ttsRate, selectedVoice, selectedMic, model }));
+  }, [ttsEnabled, ttsRate, selectedVoice, selectedMic, model]);
 
   useEffect(() => {
     const loadVoices = () => {
       const v = window.speechSynthesis.getVoices();
       if (v.length === 0) return;
       setVoices(v);
-      const aussie = v.find(x => x.lang === 'en-AU');
-      setSelectedVoice(aussie?.name ?? v[0]?.name ?? '');
+      if (!saved.selectedVoice) {
+        const aussie = v.find(x => x.lang === 'en-AU');
+        setSelectedVoice(aussie?.name ?? v[0]?.name ?? '');
+      }
     };
     loadVoices();
     window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
@@ -63,7 +70,13 @@ function App() {
   const speak = (text: string) => {
     if (!ttsEnabled) return;
     window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
+    const clean = text
+      .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '')
+      .replace(/[*_~`#>|\\]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!clean) return;
+    const utt = new SpeechSynthesisUtterance(clean);
     utt.rate = ttsRate;
     const voice = window.speechSynthesis.getVoices().find(v => v.name === selectedVoice);
     if (voice) { utt.voice = voice; utt.lang = voice.lang; }
@@ -87,7 +100,7 @@ function App() {
       speak(response);
     } catch (error: any) {
       const errMsg = error?.message ?? String(error);
-      setMessages((prev) => [...prev, { role: 'assistant', content: `⚠️ ${errMsg}` }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: `[Error] ${errMsg}` }]);
     } finally {
       setIsTyping(false);
       setKoalaState('idle');
@@ -95,8 +108,8 @@ function App() {
   };
 
   const handleVoiceInput = async (transcript: string) => {
-    if (!transcript.trim() || transcript.startsWith('⚠️')) {
-      if (transcript.startsWith('⚠️')) {
+    if (!transcript.trim() || transcript.startsWith('[Error]')) {
+      if (transcript.startsWith('[Error]')) {
         setMessages(prev => [...prev, { role: 'assistant', content: transcript }]);
       }
       return;

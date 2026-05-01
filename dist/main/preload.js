@@ -1,1 +1,18 @@
-"use strict";const r=require("electron");r.contextBridge.exposeInMainWorld("electron",{ollamaChat:(e,n)=>r.ipcRenderer.invoke("ollama:chat",e,n),ollamaModels:()=>r.ipcRenderer.invoke("ollama:models"),setModel:e=>r.ipcRenderer.invoke("ollama:setModel",e),startRecording:()=>r.ipcRenderer.invoke("voice:start-recording"),stopRecording:()=>r.ipcRenderer.invoke("voice:stop-recording"),synthesizeSpeech:e=>r.ipcRenderer.invoke("voice:synthesize",e),transcribe:e=>r.ipcRenderer.invoke("voice:transcribe",e),resizeWindow:e=>r.ipcRenderer.invoke("window:resize",e),startMove:()=>r.ipcRenderer.send("window:startMove"),moveWindow:(e,n)=>r.ipcRenderer.send("window:move",e,n),openSettings:e=>r.ipcRenderer.send("shell:open",e)});
+"use strict";
+const electron = require("electron");
+electron.contextBridge.exposeInMainWorld("electron", {
+  // Ollama
+  ollamaChat: (message, history) => electron.ipcRenderer.invoke("ollama:chat", message, history),
+  ollamaModels: () => electron.ipcRenderer.invoke("ollama:models"),
+  setModel: (model) => electron.ipcRenderer.invoke("ollama:setModel", model),
+  // Voice
+  startRecording: () => electron.ipcRenderer.invoke("voice:start-recording"),
+  stopRecording: () => electron.ipcRenderer.invoke("voice:stop-recording"),
+  synthesizeSpeech: (text) => electron.ipcRenderer.invoke("voice:synthesize", text),
+  transcribe: (audioBase64) => electron.ipcRenderer.invoke("voice:transcribe", audioBase64),
+  // Window
+  resizeWindow: (height) => electron.ipcRenderer.invoke("window:resize", height),
+  startMove: () => electron.ipcRenderer.send("window:startMove"),
+  moveWindow: (dx, dy) => electron.ipcRenderer.send("window:move", dx, dy),
+  openSettings: (url) => electron.ipcRenderer.send("shell:open", url)
+});

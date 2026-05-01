@@ -158,7 +158,7 @@ async function initializeServices() {
     try { fs.unlinkSync(tmpWebm); } catch {}
 
     if (ffmpeg.status !== 0 || !fs.existsSync(tmpWav)) {
-      return '⚠️ ffmpeg not found — install ffmpeg and add it to PATH.';
+      return '[Error] ffmpeg not found — install ffmpeg and add it to PATH.';
     }
 
     // Try whisper first (much better accuracy)
@@ -175,7 +175,7 @@ async function initializeServices() {
     try { fs.unlinkSync(tmpWav); } catch {}
     const stderr = whisper.stderr?.toString() || '';
     const stdout = whisper.stdout?.toString() || '';
-    return `⚠️ Whisper failed (status ${whisper.status}): ${stderr || stdout || 'no output'}`;
+    return `[Error] Whisper failed (status ${whisper.status}): ${stderr || stdout || 'no output'}`;
   });
 }
 

@@ -87,14 +87,14 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({
           const transcript = await window.electron.transcribe(base64);
           if (transcript?.trim()) onVoiceInput(transcript.trim());
         } catch (err: any) {
-          onVoiceInput(`⚠️ Transcription failed: ${err?.message ?? String(err)}`);
+          onVoiceInput(`[Error] Transcription failed: ${err?.message ?? String(err)}`);
         }
       };
 
       mr.start();
       setIsRecording(true);
     }).catch(err => {
-      onVoiceInput(`⚠️ Mic access failed: ${err?.message ?? err}`);
+      onVoiceInput(`[Error] Mic access failed: ${err?.message ?? err}`);
     });
   };
 
@@ -107,7 +107,7 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({
       <div className="chat-header">
         <h3>Chat with Rémi</h3>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button className="chat-close" onClick={() => setShowSettings(s => !s)} title="Settings">⚙️</button>
+          <button className="chat-close" onClick={() => setShowSettings(s => !s)} title="Settings">Settings</button>
           <button className="chat-close" onClick={onClose}>&times;</button>
         </div>
       </div>
@@ -183,7 +183,7 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({
 
       <form className="chat-input-area" onSubmit={handleSubmit}>
         <button type="button" className={`chat-voice-btn ${isRecording ? 'recording' : ''}`} onClick={toggleRecording} title={isRecording ? 'Stop recording' : 'Start recording'}>
-          {isRecording ? '🎤' : '🎙️'}
+          {isRecording ? 'Stop' : 'Mic'}
         </button>
         <input
           type="text"
@@ -192,7 +192,7 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        <button type="submit" className="chat-send-btn" disabled={!inputValue.trim()}>➤</button>
+        <button type="submit" className="chat-send-btn" disabled={!inputValue.trim()}>Send</button>
       </form>
     </div>
   );
