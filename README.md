@@ -107,3 +107,11 @@ npm run electron:dev
 ```
 
 Then select your preferred model from the settings panel inside the app.
+
+## License
+
+MIT — see [LICENSE](LICENSE)
+
+## Support
+
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-donate-yellow)](https://buymeacoffee.com/mgaillardetz)
