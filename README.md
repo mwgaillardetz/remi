@@ -1,6 +1,7 @@
 # Rémi
 
-Your new favorite AI desktop companion - inspired by Bonzibuddy without the spyware.
+Your new favorite AI desktop companion - inspired by Bonzibuddy without the spyware. He can even
+serenade you with the hit classic, "In My Merry Oldsmobile"!
 
 ## What he does
 
