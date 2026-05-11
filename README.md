@@ -6,10 +6,10 @@ serenade you with the hit classic, "In My Merry Oldsmobile"!
 ## What he does
 
 - Floats on your desktop as a transparent, always-on-top window
-- Drag him anywhere on screen
+- Drag him anywhere on screen. Not too fast
 - Click him to open a chat panel below
 - Talks back using your system's text-to-speech
-- Listens via your microphone (toggle switch)
+- Talk to him by using the microphone toggle
 - Powered by a local or cloud (recommended) Ollama model
 
 ## Requirements
@@ -60,10 +60,10 @@ ffmpeg -version
 Whisper handles speech-to-text locally. Requires Python 3.8+.
 
 ```bash
-pip install openai-whisper "numpy<2"
+pip install openai-whisper
 ```
 
-The `numpy<2` pin is required due to a compatibility issue between the current numpy release and whisper's torch dependency.
+Note: `numpy<2` pin may be required due to a compatibility issue between the current numpy release and whisper's torch dependency.
 
 ### 4. Install dependencies
 
@@ -87,26 +87,16 @@ npm run electron:build
 
 Open the chat panel and click the gear icon to change:
 
-- Ollama model
-- Voice (text-to-speech)
+- Ollama model/optional target host
+- Voice (text-to-speech) - for windows, download more voices if you want a little more pizazz https://support.microsoft.com/en-us/topic/download-languages-and-voices-for-immersive-reader-read-mode-and-read-aloud-4c83a8d8-7486-42f7-8e46-2b0fdf753130
 - Speaking speed
 - Microphone input
+- Customize appearence
 
 ## Keyboard shortcut
 
 `Ctrl+Shift+B` toggles Rémi's visibility.
 
-## Pointing at a remote Ollama instance
-
-If you have Ollama running on another machine or a cloud server, set the host before launching:
-
-```bash
-# Windows
-set OLLAMA_HOST=http://your-server:11434
-npm run electron:dev
-```
-
-Then select your preferred model from the settings panel inside the app.
 
 ## License
 
