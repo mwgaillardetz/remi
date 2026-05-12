@@ -318,12 +318,12 @@ function createKoala(palette: { fur: number; lightFur: number; darkFur: number }
   let leftArm!: THREE.Mesh, rightArm!: THREE.Mesh;
   for (const side of [-1, 1]) {
     const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.42, 16, 32), fur);
-    arm.position.set(side * 0.9, -1.15, 0.28);
-    arm.rotation.z = 0;
+    arm.position.set(side * 1.0, -1.55, 0.15);
+    arm.rotation.z = side * 0.15;
     arm.rotation.x = Math.PI;
     koala.add(arm);
     if (side === -1) leftArm = arm; else rightArm = arm;
-    const paw = new THREE.Mesh(new THREE.SphereGeometry(0.2, 32, 32), lightFur);
+    const paw = new THREE.Mesh(new THREE.SphereGeometry(0.19, 16, 16), fur);
     paw.position.set(0, -0.38, 0);
     arm.add(paw);
   }
@@ -648,8 +648,8 @@ function createKoala(palette: { fur: number; lightFur: number; darkFur: number }
     for (const side of [-1, 1]) {
       const sleeve = new THREE.Mesh(new THREE.SphereGeometry(0.20, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.7), mat);
       sleeve.scale.set(1.0, 1.4, 1.0);
-      sleeve.position.set(side * 0.9, -1.15, 0.28);
-      sleeve.rotation.z = 0;
+      sleeve.position.set(side * 1.0, -1.55, 0.15);
+      sleeve.rotation.z = side * 0.15;
       sleeve.rotation.x = Math.PI;
       g.add(sleeve);
     }
