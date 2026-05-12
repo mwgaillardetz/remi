@@ -27,9 +27,13 @@ interface Window {
     stopRecording: () => Promise<string | null>;
     synthesizeSpeech: (text: string) => Promise<void>;
     transcribe: (audioBase64: string) => Promise<string>;
-    resizeWindow: (height: number) => Promise<void>;
+    resizeWindow: (width: number, height: number) => Promise<void>;
     startMove: () => void;
     moveWindow: (dx: number, dy: number) => void;
+    setWindowPosition: (x: number, y: number) => void;
+    getWindowPosition: () => Promise<[number, number]>;
+    setIgnoreMouse: (ignore: boolean) => void;
+    setOllamaHost: (host: string) => Promise<string[]>;
     openSettings: (url: string) => void;
   };
 }

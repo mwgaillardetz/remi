@@ -53,6 +53,7 @@ function createWindow() {
 
   mainWindow.webContents.once('did-finish-load', () => {
     if (!mainWindow) return;
+    mainWindow.setIgnoreMouseEvents(true, { forward: true });
     const { screen } = require('electron');
     const { width: sw, height: sh } = screen.getPrimaryDisplay().workAreaSize;
     const winW = 400, winH = 500;
@@ -97,19 +98,27 @@ async function initializeServices() {
   ollama = new OllamaService();
   voice = new VoiceService();
 
-  ipcMain.handle('window:resize', (_: any, height: number) => {
-    if (mainWindow) mainWindow.setSize(400, height, true);
+  ipcMain.handle('window:resize', (_: any, width: number, height: number) => {
+    if (mainWindow) mainWindow.setSize(width, height, true);
   });
 
   ipcMain.on('shell:open', (_, url: string) => shell.openExternal(url));
 
-  ipcMain.on('window:startMove', () => {    mainWindow?.moveTop();
+  ipcMain.on('window:setIgnoreMouse', (_: any, ignore: boolean) => {
+    if (!mainWindow) return;
+    mainWindow.setIgnoreMouseEvents(ignore, { forward: true });
   });
 
-  ipcMain.on('window:move', (_: any, dx: number, dy: number) => {
+  ipcMain.on('window:startMove', () => { mainWindow?.moveTop(); });
+
+  ipcMain.on('window:setPosition', (_: any, x: number, y: number) => {
     if (!mainWindow) return;
-    const [x, y] = mainWindow.getPosition();
-    mainWindow.setPosition(x + dx, y + dy);
+    mainWindow.setPosition(Math.round(x), Math.round(y));
+  });
+
+  ipcMain.handle('window:getPosition', () => {
+    if (!mainWindow) return [0, 0];
+    return mainWindow.getPosition();
   });
 
   ipcMain.handle('ollama:chat', async (_, message: string, history: any[]) => {
@@ -125,6 +134,12 @@ async function initializeServices() {
   ipcMain.handle('ollama:setModel', async (_, model: string) => {
     if (!ollama) throw new Error('Ollama not initialized');
     ollama.setModel(model);
+  });
+
+  ipcMain.handle('ollama:setHost', async (_, host: string) => {
+    if (!ollama) throw new Error('Ollama not initialized');
+    ollama.setHost(host);
+    return ollama.listModels();
   });
 
   ipcMain.handle('voice:start-recording', async () => {

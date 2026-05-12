@@ -11728,7 +11728,14 @@ var _eval = EvalError;
 var range = RangeError;
 var ref = ReferenceError;
 var syntax = SyntaxError;
-var type = TypeError;
+var type;
+var hasRequiredType;
+function requireType() {
+  if (hasRequiredType) return type;
+  hasRequiredType = 1;
+  type = TypeError;
+  return type;
+}
 var uri = URIError;
 var abs$1 = Math.abs;
 var floor$1 = Math.floor;
@@ -11974,7 +11981,7 @@ function requireCallBindApplyHelpers() {
   if (hasRequiredCallBindApplyHelpers) return callBindApplyHelpers;
   hasRequiredCallBindApplyHelpers = 1;
   var bind3 = functionBind;
-  var $TypeError2 = type;
+  var $TypeError2 = requireType();
   var $call2 = requireFunctionCall();
   var $actualApply = requireActualApply();
   callBindApplyHelpers = function callBindBasic(args) {
@@ -12047,7 +12054,7 @@ var $EvalError = _eval;
 var $RangeError = range;
 var $ReferenceError = ref;
 var $SyntaxError = syntax;
-var $TypeError$1 = type;
+var $TypeError$1 = requireType();
 var $URIError = uri;
 var abs = abs$1;
 var floor = floor$1;
@@ -12378,7 +12385,7 @@ var GetIntrinsic2 = getIntrinsic;
 var $defineProperty = GetIntrinsic2("%Object.defineProperty%", true);
 var hasToStringTag = requireShams()();
 var hasOwn$1 = hasown;
-var $TypeError = type;
+var $TypeError = requireType();
 var toStringTag = hasToStringTag ? Symbol.toStringTag : null;
 var esSetTostringtag = function setToStringTag(object, value) {
   var overrideIfSet = arguments.length > 2 && !!arguments[2] && arguments[2].force;
@@ -17489,10 +17496,10 @@ const {
   getAdapter,
   mergeConfig
 } = axios;
-const BASE = "http://127.0.0.1:11434";
 class OllamaService {
   constructor() {
     __publicField(this, "model", "llama3.2");
+    __publicField(this, "host", "http://127.0.0.1:11434");
     __publicField(this, "systemPrompt", `You are Rémi, a playful, friendly, and helpful AI assistant.
 You're curious, kind, and love to chat. You speak in a warm, conversational tone.
 You're knowledgeable but humble, and you enjoy making people smile.
@@ -17505,7 +17512,7 @@ Keep responses concise and natural, like a real conversation.`);
       ...history,
       { role: "user", content: message }
     ];
-    const { data } = await axios.post(`${BASE}/api/chat`, { model, messages, stream: false });
+    const { data } = await axios.post(`${this.host}/api/chat`, { model, messages, stream: false });
     return data.message.content;
   }
   async resolveModel() {
@@ -17519,11 +17526,14 @@ Keep responses concise and natural, like a real conversation.`);
     return this.model;
   }
   async listModels() {
-    const { data } = await axios.get(`${BASE}/api/tags`);
+    const { data } = await axios.get(`${this.host}/api/tags`);
     return (data.models ?? []).map((m) => m.name);
   }
   setModel(model) {
     this.model = model;
+  }
+  setHost(host) {
+    this.host = host.replace(/\/$/, "");
   }
 }
 function createTray(mainWindow2) {
@@ -17610,6 +17620,7 @@ function createWindow() {
   }
   mainWindow.webContents.once("did-finish-load", () => {
     if (!mainWindow) return;
+    mainWindow.setIgnoreMouseEvents(true, { forward: true });
     const { screen } = require("electron");
     const { width: sw, height: sh } = screen.getPrimaryDisplay().workAreaSize;
     const winW = 400, winH = 500;
@@ -17648,17 +17659,24 @@ function registerShortcuts() {
 async function initializeServices() {
   ollama = new OllamaService();
   voice = new VoiceService();
-  electron.ipcMain.handle("window:resize", (_, height) => {
-    if (mainWindow) mainWindow.setSize(400, height, true);
+  electron.ipcMain.handle("window:resize", (_, width, height) => {
+    if (mainWindow) mainWindow.setSize(width, height, true);
   });
   electron.ipcMain.on("shell:open", (_, url2) => electron.shell.openExternal(url2));
+  electron.ipcMain.on("window:setIgnoreMouse", (_, ignore) => {
+    if (!mainWindow) return;
+    mainWindow.setIgnoreMouseEvents(ignore, { forward: true });
+  });
   electron.ipcMain.on("window:startMove", () => {
     mainWindow == null ? void 0 : mainWindow.moveTop();
   });
-  electron.ipcMain.on("window:move", (_, dx, dy) => {
+  electron.ipcMain.on("window:setPosition", (_, x, y) => {
     if (!mainWindow) return;
-    const [x, y] = mainWindow.getPosition();
-    mainWindow.setPosition(x + dx, y + dy);
+    mainWindow.setPosition(Math.round(x), Math.round(y));
+  });
+  electron.ipcMain.handle("window:getPosition", () => {
+    if (!mainWindow) return [0, 0];
+    return mainWindow.getPosition();
   });
   electron.ipcMain.handle("ollama:chat", async (_, message, history) => {
     if (!ollama) throw new Error("Ollama not initialized");
@@ -17671,6 +17689,11 @@ async function initializeServices() {
   electron.ipcMain.handle("ollama:setModel", async (_, model) => {
     if (!ollama) throw new Error("Ollama not initialized");
     ollama.setModel(model);
+  });
+  electron.ipcMain.handle("ollama:setHost", async (_, host) => {
+    if (!ollama) throw new Error("Ollama not initialized");
+    ollama.setHost(host);
+    return ollama.listModels();
   });
   electron.ipcMain.handle("voice:start-recording", async () => {
     if (!voice) throw new Error("Voice not initialized");

@@ -24,6 +24,19 @@ interface ChatOverlayProps {
   models: string[];
   model: string;
   onModelChange: (model: string) => void;
+  scale: number;
+  onScaleChange: (scale: number) => void;
+  ollamaHost: string;
+  onOllamaHostChange: (host: string) => void;
+  furColor: 'grey' | 'amber' | 'black';
+  onFurColorChange: (color: 'grey' | 'amber' | 'black') => void;
+  onQuickAction: (prompt: string, isSinging?: boolean) => void;
+  showShirt: boolean;
+  onShowShirtChange: (v: boolean) => void;
+  shirtStyle: 'hawaiian' | 'plain' | 'tuxedo';
+  onShirtStyleChange: (v: 'hawaiian' | 'plain' | 'tuxedo') => void;
+  showSunglasses: boolean;
+  onShowSunglassesChange: (v: boolean) => void;
 }
 
 const ChatOverlay: React.FC<ChatOverlayProps> = ({
@@ -32,6 +45,11 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({
   voices, selectedVoice, onVoiceChange,
   micDevices, selectedMic, onMicChange,
   models, model, onModelChange,
+  scale, onScaleChange,
+  ollamaHost, onOllamaHostChange,
+  furColor, onFurColorChange, onQuickAction,
+  showShirt, onShowShirtChange, shirtStyle, onShirtStyleChange,
+  showSunglasses, onShowSunglassesChange,
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -117,10 +135,49 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({
       {showSettings && (
         <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <label style={labelStyle}>
+            <span style={spanStyle}>Host</span>
+            <input
+              type="text"
+              placeholder="http://127.0.0.1:11434 (optional)"
+              defaultValue={ollamaHost}
+              onBlur={e => { if (e.target.value !== ollamaHost) onOllamaHostChange(e.target.value); }}
+              onKeyDown={e => { if (e.key === 'Enter') { e.currentTarget.blur(); } }}
+              style={{ ...selectStyle, fontFamily: 'monospace' }}
+            />
+          </label>
+          <label style={labelStyle}>
             <span style={spanStyle}>Model</span>
             <select value={model} onChange={e => onModelChange(e.target.value)} style={selectStyle}>
               {models.map(m => <option key={m} value={m} style={{ background: '#1a1a2e' }}>{m}</option>)}
             </select>
+          </label>
+          <label style={labelStyle}>
+            <span style={spanStyle}>Size</span>
+            <input type="range" min="50" max="150" step="5" value={scale} onChange={e => onScaleChange(parseInt(e.target.value))} style={{ flex: 1, minWidth: 0 }} />
+            <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', flexShrink: 0, width: '36px' }}>{scale}%</span>
+          </label>
+          <label style={labelStyle}>
+            <span style={spanStyle}>Color</span>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              {([['grey', '#8a8a9a', 'Koala'], ['amber', '#9a6a2a', 'Bear'], ['black', '#2a2a2a', 'Black']] as const).map(([val, hex, label]) => (
+                <button key={val} onClick={() => onFurColorChange(val)} title={label} style={{ width: 22, height: 22, borderRadius: '50%', background: hex, border: furColor === val ? '2px solid #fff' : '2px solid transparent', cursor: 'pointer', padding: 0 }} />
+              ))}
+            </div>
+          </label>
+          <label style={labelStyle}>
+            <span style={spanStyle}>Shirt</span>
+            <input type="checkbox" checked={showShirt} onChange={e => onShowShirtChange(e.target.checked)} style={{ cursor: 'pointer', flexShrink: 0 }} />
+            {showShirt && (
+              <select value={shirtStyle} onChange={e => onShirtStyleChange(e.target.value as any)} style={{ ...selectStyle, marginLeft: 4 }}>
+                <option value="hawaiian" style={{ background: '#1a1a2e' }}>🌺 Hawaiian</option>
+                <option value="plain" style={{ background: '#1a1a2e' }}>👕 Plain</option>
+                <option value="tuxedo" style={{ background: '#1a1a2e' }}>🤵 Tuxedo</option>
+              </select>
+            )}
+          </label>
+          <label style={labelStyle}>
+            <span style={spanStyle}>Sunglasses</span>
+            <input type="checkbox" checked={showSunglasses} onChange={e => onShowSunglassesChange(e.target.checked)} style={{ cursor: 'pointer', flexShrink: 0 }} />
           </label>
           <label style={labelStyle}>
             <span style={spanStyle}>Voice</span>
@@ -181,6 +238,19 @@ const ChatOverlay: React.FC<ChatOverlayProps> = ({
           </div>
         )}
         <div ref={messagesEndRef} />
+      </div>
+
+      <div style={{ display: 'flex', gap: '6px', padding: '6px 12px 0', justifyContent: 'center' }}>
+        {([
+          ['😄 Joke', 'Tell me a short joke!', false],
+          ['🎵 Song', 'Sing me a few lines of "In My Merry Oldsmobile"!', true],
+          ['💡 Fun fact', 'Give me a surprising fun fact!', false],
+        ] as const).map(([label, prompt, isSinging]) => (
+          <button key={label} type="button" onClick={() => onQuickAction(prompt, isSinging)}
+            style={{ flex: 1, padding: '4px 0', fontSize: '11px', background: 'rgba(255,255,255,0.08)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', cursor: 'pointer' }}>
+            {label}
+          </button>
+        ))}
       </div>
 
       <form className="chat-input-area" onSubmit={handleSubmit}>
