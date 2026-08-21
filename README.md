@@ -16,6 +16,7 @@ serenade you with the hit classic, "In My Merry Oldsmobile"!
 
 - Node.js 18+
 - Ollama
+- A decent gpu to support a local llm. Tested only on NVIDIA, ymmv on AMD
 - ffmpeg (for voice input)
 - Python + openai-whisper (for voice input)
 
