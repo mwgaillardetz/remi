@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/native/">
+    <Project Path="native/Remi.Core/Remi.Core.csproj" />
+    <Project Path="native/Remi.Desktop/Remi.Desktop.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Remi.Core.Tests/Remi.Core.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,22 @@
+{
+  "nativePublishedDesktopRuntime": {
+    "measuredAtUtc": "2026-10-11T17:46:48.9228131Z",
+    "runtime": ".NET 10.0.12",
+    "operatingSystem": "Microsoft Windows 10.0.26200",
+    "scenario": "Pet visible, tray and shortcut registered, chat closed, blinking enabled, no model loaded by Remi",
+    "durationSeconds": 12.01,
+    "cpuPercentOfOneCore": 1.692,
+    "workingSetMiB": 127.9,
+    "privateMemoryMiB": 76.4
+  },
+  "historicalElectronRenderer": {
+    "measuredAtUtc": "2026-10-11T17:50:02.5282471Z",
+    "electron": "28.3.3",
+    "scenario": "Historical 400x500 Three.js pet visible, chat closed, microphone denied, no inference, isolated profile; minimal main-process harness",
+    "processCount": 6,
+    "durationSeconds": 12.01,
+    "cpuPercentOfOneCore": 17.164,
+    "workingSetMiB": 399.8,
+    "privateMemoryMiB": 283.1
+  }
+}

@@ -1,57 +1,16 @@
 {
   "name": "remi",
-  "version": "1.0.0",
-  "description": "A playful koala buddy with local AI - your privacy-first desktop companion",
-  "main": "dist/main/main.js",
-  "scripts": {
-    "start": "vite",
-    "electron": "electron .",
-    "build": "vite build",
-    "electron:build": "npm run build && electron-builder",
-    "electron:dev": "vite",
-    "typecheck": "tsc --noEmit"
-  },
-  "keywords": [
-    "electron",
-    "desktop-pet",
-    "ollama",
-    "ai-companion"
-  ],
-  "author": "",
+  "version": "2.0.0",
+  "private": true,
+  "description": "A native Windows koala companion with local AI and a lighter footprint",
   "license": "MIT",
-  "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@types/three": "^0.160.0",
-    "@vitejs/plugin-react": "^4.2.0",
-    "concurrently": "^8.2.0",
-    "cross-env": "^7.0.3",
-    "electron": "^28.0.0",
-    "electron-builder": "^24.9.0",
-    "typescript": "^5.3.0",
-    "vite": "^5.0.0",
-    "vite-plugin-electron": "^0.28.0",
-    "wait-on": "^7.2.0"
-  },
-  "dependencies": {
-    "axios": "^1.6.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "three": "^0.160.0"
-  },
-  "build": {
-    "appId": "com.remi.app",
-    "productName": "remi",
-    "win": {
-      "target": [
-        "nsis"
-      ],
-      "icon": "assets/icon.ico"
-    },
-    "files": [
-      "dist/**/*",
-      "src/main/**/*",
-      "assets/**/*"
-    ]
+  "scripts": {
+    "start": "dotnet run --project native/Remi.Desktop -c Release",
+    "build": "dotnet build Remi.slnx -c Release",
+    "test": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test.ps1",
+    "test:core": "dotnet run --project tests/Remi.Core.Tests -c Release",
+    "test:voice": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-voice.ps1",
+    "package": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/publish.ps1",
+    "benchmark": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/benchmark.ps1"
   }
 }

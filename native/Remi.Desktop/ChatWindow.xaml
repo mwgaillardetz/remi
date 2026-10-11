@@ -1,0 +1,53 @@
+<Window x:Class="Remi.Desktop.ChatWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Chat with Rémi" Width="410" Height="590"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent" Topmost="True" ShowInTaskbar="False"
+        ResizeMode="NoResize" UseLayoutRounding="True" KeyDown="WindowKeyDown">
+  <Border Background="{DynamicResource Paper}" BorderBrush="{DynamicResource Border}" BorderThickness="1" CornerRadius="18">
+    <Grid Margin="18">
+      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+      <Grid MouseLeftButtonDown="HeaderDown" Background="Transparent" Margin="0,0,0,15">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+        <StackPanel><TextBlock Text="rémi" FontSize="25" FontWeight="SemiBold" /><TextBlock Text="A little company. A helping paw." FontSize="11" Foreground="{DynamicResource Muted}" Margin="0,3,0,0" /></StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+          <Button Content="⚙" Style="{StaticResource IconButton}" Click="SettingsClick" ToolTip="Settings" AutomationProperties.Name="Settings" />
+          <Button Content="−" Style="{StaticResource IconButton}" Click="CloseClick" ToolTip="Close chat (Esc)" AutomationProperties.Name="Close chat" />
+        </StackPanel>
+      </Grid>
+      <Border Grid.Row="1" Background="{DynamicResource Subtle}" CornerRadius="8" Padding="10,8" Margin="0,0,0,12">
+        <DockPanel><Ellipse Width="6" Height="6" Fill="{DynamicResource AccentText}" Margin="0,0,7,0" /><TextBlock x:Name="ConnectionLabel" Text="Ollama · on your terms" FontSize="11" Foreground="{DynamicResource Muted}" TextTrimming="CharacterEllipsis" /></DockPanel>
+      </Border>
+      <Grid Grid.Row="2">
+        <StackPanel x:Name="Welcome" VerticalAlignment="Center" Margin="18,0,18,30">
+          <TextBlock Text="Make yourself at home." FontSize="20" FontWeight="SemiBold" TextAlignment="Center" />
+          <TextBlock Text="A question, a bright idea, or just a hello.&#x0a;I'm here for all of it." TextAlignment="Center" TextWrapping="Wrap" Foreground="{DynamicResource Muted}" LineHeight="21" Margin="0,10,0,0" />
+        </StackPanel>
+        <ListBox x:Name="Conversation" BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" ScrollViewer.CanContentScroll="True" Focusable="False">
+          <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Padding" Value="0" /><Setter Property="Margin" Value="0,0,0,12" /><Setter Property="Focusable" Value="False" /><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><ContentPresenter /></ControlTemplate></Setter.Value></Setter></Style></ListBox.ItemContainerStyle>
+          <ListBox.ItemTemplate><DataTemplate>
+            <Border x:Name="Bubble" Background="{DynamicResource Subtle}" CornerRadius="12,12,12,3" Padding="12,10" Margin="0,0,24,0">
+              <StackPanel><TextBlock x:Name="Speaker" Text="RÉMI" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource AccentText}" Margin="0,0,0,5" />
+                <TextBox Text="{Binding Content, Mode=OneWay}" IsReadOnly="True" IsReadOnlyCaretVisible="False" TextWrapping="Wrap" BorderThickness="0" Padding="0" Background="Transparent" FontSize="13" /></StackPanel>
+            </Border>
+            <DataTemplate.Triggers><DataTrigger Binding="{Binding Role}" Value="user"><Setter TargetName="Bubble" Property="Background" Value="{DynamicResource UserBubble}" /><Setter TargetName="Bubble" Property="Margin" Value="24,0,0,0" /><Setter TargetName="Bubble" Property="CornerRadius" Value="12,12,3,12" /><Setter TargetName="Speaker" Property="Text" Value="YOU" /></DataTrigger></DataTemplate.Triggers>
+          </DataTemplate></ListBox.ItemTemplate>
+        </ListBox>
+      </Grid>
+      <StackPanel Grid.Row="3" Margin="0,10,0,12">
+        <TextBlock x:Name="Status" Foreground="{DynamicResource Muted}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,8" Visibility="Collapsed" AutomationProperties.LiveSetting="Polite" />
+        <UniformGrid Columns="3"><Button x:Name="JokeButton" Content="A little laugh" Click="JokeClick" FontSize="11" Padding="5,8" Margin="0,0,4,0" /><Button x:Name="FactButton" Content="Surprise me" Click="FactClick" FontSize="11" Padding="5,8" Margin="2,0" /><Button x:Name="SongButton" Content="Sing a song" Click="SongClick" FontSize="11" Padding="5,8" Margin="4,0,0,0" /></UniformGrid>
+      </StackPanel>
+      <Border Grid.Row="4" Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Border}" BorderThickness="1" CornerRadius="11" Padding="5">
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+          <Button x:Name="MicButton" Style="{StaticResource IconButton}" Click="MicClick" ToolTip="Record a voice message" AutomationProperties.Name="Record a voice message" VerticalAlignment="Bottom"><Viewbox Width="15" Height="17"><Path x:Name="MicIcon" Fill="{DynamicResource Accent}" Data="M9,2 Q9,0 12,0 Q15,0 15,2 L15,10 Q15,13 12,13 Q9,13 9,10 Z M5,9 L7,9 Q7,16 12,16 Q17,16 17,9 L19,9 Q19,17 13,18 L13,21 17,21 17,23 7,23 7,21 11,21 11,18 Q5,17 5,9 Z" /></Viewbox></Button>
+          <Grid Grid.Column="1">
+            <TextBox x:Name="Composer" BorderThickness="0" Background="Transparent" Padding="6,7" AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="88" MaxLength="8000" VerticalScrollBarVisibility="Auto" PreviewKeyDown="ComposerKeyDown" AutomationProperties.Name="Message to Rémi" ToolTip="Type a message. Enter to send; Shift+Enter for a new line." />
+            <TextBlock Text="Say hello…" Foreground="{DynamicResource Muted}" Margin="6,7" IsHitTestVisible="False" VerticalAlignment="Center"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding ElementName=Composer, Path=Text}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+          </Grid>
+          <Button Grid.Column="2" x:Name="SendButton" Content="↑" Style="{StaticResource PrimaryButton}" Width="34" Height="34" Padding="0" FontSize="19" Click="SendClick" ToolTip="Send message" AutomationProperties.Name="Send message" VerticalAlignment="Bottom" />
+        </Grid>
+      </Border>
+      <DockPanel Grid.Row="5" Margin="0,10,0,0"><TextBlock Text="Your space. Your conversation." Foreground="{DynamicResource Muted}" FontSize="10" /><Button Content="Clear chat" Click="ClearClick" HorizontalAlignment="Right" FontSize="10" Padding="0" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource Muted}" /></DockPanel>
+    </Grid>
+  </Border>
+</Window>

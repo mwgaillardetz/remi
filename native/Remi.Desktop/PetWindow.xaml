@@ -1,0 +1,19 @@
+<Window x:Class="Remi.Desktop.PetWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:character="clr-namespace:Remi.Desktop.Character"
+        Title="Rémi" Width="280" Height="292" WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False" ShowActivated="False" UseLayoutRounding="True">
+  <Grid>
+    <Grid.ContextMenu>
+      <ContextMenu x:Name="CompanionMenu">
+        <MenuItem Header="Chat with Rémi" Click="ChatClick" />
+        <MenuItem Header="Settings…" Click="SettingsClick" />
+        <MenuItem Header="Hide Rémi" Click="HideClick" />
+        <Separator />
+        <MenuItem x:Name="QuitMenuItem" Header="Close Rémi" Click="QuitClick" />
+      </ContextMenu>
+    </Grid.ContextMenu>
+    <character:KoalaVisual x:Name="Character" Margin="4,0" Cursor="Hand" Focusable="True"
+        AutomationProperties.Name="Rémi. Click to chat, drag to move, or right-click for options." ToolTip="Click to chat · Drag to move · Right-click for options"
+        MouseLeftButtonDown="PetDown" MouseMove="PetMove" MouseLeftButtonUp="PetUp" KeyDown="PetKeyDown" />
+  </Grid>
+</Window>
